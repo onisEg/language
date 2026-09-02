@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحدي الـ 90 يوم — إنجليزي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Lora:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2b27; --paper:#f5f1e6; --paper-2:#efe9d8;
+    --line:#c9bfa4; --rule:#d9cfb4;
+    --moss:#3f6b4f; --moss-soft:#e3ecdf;
+    --clay:#b5623a; --gold:#c9932a;
+    --muted:#7a725f; --done:#3f6b4f;
+    --shadow:rgba(40,32,16,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece5d4; --paper:#20241f; --paper-2:#272c25;
+      --line:#3f453a; --rule:#343a30; --moss:#7fb08c; --moss-soft:#28322a;
+      --clay:#d98a63; --gold:#d9ab52; --muted:#9a927e; --done:#7fb08c;
+      --shadow:rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece5d4; --paper:#20241f; --paper-2:#272c25;
+    --line:#3f453a; --rule:#343a30; --moss:#7fb08c; --moss-soft:#28322a;
+    --clay:#d98a63; --gold:#d9ab52; --muted:#9a927e; --done:#7fb08c;
+    --shadow:rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Cairo',sans-serif;background:var(--paper);color:var(--ink);
+    line-height:1.7;padding:0 0 80px;-webkit-tap-highlight-color:transparent;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 18px}
+
+  /* ---- Hero ---- */
+  header{
+    background:
+      repeating-linear-gradient(transparent, transparent 37px, var(--rule) 37px, var(--rule) 38px),
+      var(--paper-2);
+    border-bottom:2px solid var(--line);
+    padding:38px 0 26px;position:relative;overflow:hidden;
+  }
+  header::before{
+    content:"";position:absolute;top:0;right:52px;bottom:0;width:2px;
+    background:var(--clay);opacity:.5;
+  }
+  .hero-inner{padding-right:34px}
+  .kicker{font-size:.82rem;color:var(--clay);font-weight:600;letter-spacing:.02em;margin-bottom:6px}
+  h1{font-size:2.15rem;font-weight:800;line-height:1.25;margin-bottom:10px}
+  h1 .en{font-family:'Lora',serif;font-style:italic;font-weight:500;color:var(--moss)}
+  .sub{color:var(--muted);max-width:60ch;font-size:.98rem}
+
+  /* ---- Progress ---- */
+  .progress-card{
+    margin:22px 0 6px;background:var(--paper);border:1.5px solid var(--line);
+    border-radius:14px;padding:18px 20px;box-shadow:0 3px 14px var(--shadow);
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  .ring{--p:0;width:76px;height:76px;border-radius:50%;flex-shrink:0;
+    background:conic-gradient(var(--moss) calc(var(--p)*1%), var(--paper-2) 0);
+    display:grid;place-items:center;position:relative;transition:background .5s ease;}
+  .ring::after{content:"";position:absolute;inset:9px;background:var(--paper);border-radius:50%}
+  .ring b{position:relative;z-index:1;font-size:1.15rem;font-weight:800}
+  .p-meta{flex:1;min-width:180px}
+  .p-meta .big{font-size:1.05rem;font-weight:600}
+  .p-meta .small{color:var(--muted);font-size:.88rem}
+  .streak{font-size:.9rem;color:var(--clay);font-weight:600;margin-top:2px}
+  .reset{margin-inline-start:auto;background:none;border:1px solid var(--line);color:var(--muted);
+    font-family:inherit;font-size:.8rem;padding:6px 12px;border-radius:8px;cursor:pointer}
+  .reset:hover{color:var(--clay);border-color:var(--clay)}
+
+  /* ---- Phase ---- */
+  .phase{margin:34px 0 14px;display:flex;align-items:baseline;gap:12px}
+  .phase h2{font-size:1.28rem;font-weight:800}
+  .phase .rng{font-family:'Lora',serif;font-style:italic;color:var(--muted);font-size:.95rem}
+  .phase-line{height:1px;background:var(--line);flex:1;align-self:center}
+
+  /* ---- Day rows ---- */
+  .day{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    margin-bottom:10px;overflow:hidden;transition:border-color .2s;
+  }
+  .day.done{border-color:var(--moss)}
+  .day-head{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer}
+  .chk{width:26px;height:26px;flex-shrink:0;border:2px solid var(--line);border-radius:7px;
+    display:grid;place-items:center;transition:.2s;background:var(--paper)}
+  .day.done .chk{background:var(--moss);border-color:var(--moss)}
+  .chk svg{width:15px;height:15px;stroke:var(--paper);stroke-width:3.5;fill:none;
+    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .25s ease}
+  .day.done .chk svg{stroke-dashoffset:0}
+  .day-n{font-family:'Lora',serif;font-style:italic;color:var(--clay);font-size:.9rem;min-width:52px}
+  .day.done .day-n{color:var(--moss)}
+  .day-t{flex:1;font-weight:600;font-size:1rem}
+  .day.done .day-t{text-decoration:line-through;text-decoration-color:var(--moss);
+    text-decoration-thickness:2px;color:var(--muted)}
+  .day-t .en{font-family:'Lora',serif;font-style:italic;color:var(--muted);font-weight:500;font-size:.9rem}
+  .caret{color:var(--muted);transition:transform .25s;flex-shrink:0}
+  .day.open .caret{transform:rotate(180deg)}
+  .rev-badge{font-size:.7rem;background:var(--moss-soft);color:var(--moss);
+    padding:2px 8px;border-radius:20px;font-weight:600}
+
+  /* ---- Detail ---- */
+  .detail{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .detail-in{padding:2px 16px 18px;border-top:1px dashed var(--line);margin:0 2px}
+  .detail-in h4{font-size:.95rem;color:var(--moss);margin:16px 0 8px;font-weight:800}
+  .detail-in h4 .em{font-family:'Lora',serif;font-style:italic;color:var(--muted);font-weight:500}
+  .cond{list-style:none;display:grid;gap:7px}
+  .cond li{display:flex;gap:9px;align-items:flex-start;font-size:.92rem}
+  .cond li::before{content:"◇";color:var(--gold);flex-shrink:0}
+  .vocab{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:4px}
+  .vocab td{padding:6px 10px;border-bottom:1px solid var(--rule)}
+  .vocab td:first-child{font-family:'Lora',serif;font-weight:500;color:var(--ink);white-space:nowrap}
+  .vocab td:nth-child(2){color:var(--muted);font-size:.85rem}
+  .vocab td:last-child{text-align:end;color:var(--muted)}
+  .chunks{display:grid;gap:6px;margin-top:4px}
+  .chunk{background:var(--paper-2);border-right:3px solid var(--gold);padding:8px 12px;border-radius:6px;font-size:.9rem}
+  .chunk .en{font-family:'Lora',serif;font-style:italic;display:block;color:var(--ink)}
+  .chunk .ar{color:var(--muted);font-size:.85rem}
+  .qs{counter-reset:q;display:grid;gap:6px;margin-top:4px}
+  .qs li{list-style:none;counter-increment:q;font-size:.92rem;padding-right:30px;position:relative}
+  .qs li::before{content:counter(q);position:absolute;right:0;top:0;width:22px;height:22px;
+    background:var(--moss-soft);color:var(--moss);border-radius:50%;display:grid;place-items:center;
+    font-size:.75rem;font-weight:700}
+  .ans{margin-top:8px}
+  .ans summary{cursor:pointer;color:var(--clay);font-size:.85rem;font-weight:600;list-style:none}
+  .ans summary::-webkit-details-marker{display:none}
+  .ans summary::before{content:"▸ ";}
+  .ans[open] summary::before{content:"▾ "}
+  .ans-body{font-size:.88rem;color:var(--muted);padding:8px 12px;background:var(--paper-2);
+    border-radius:8px;margin-top:6px}
+  .src{font-size:.88rem}
+  .src a,.src b{color:var(--moss);font-weight:600}
+  .todo-note{font-size:.85rem;color:var(--muted);font-style:italic;padding:14px 4px 4px}
+  .mark-btn{margin-top:16px;width:100%;background:var(--moss);color:var(--paper);border:none;
+    font-family:inherit;font-weight:700;font-size:.95rem;padding:12px;border-radius:10px;cursor:pointer;
+    transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .mark-btn:hover{filter:brightness(1.08)}
+  .day.done .mark-btn{background:var(--paper-2);color:var(--moss);border:1.5px solid var(--moss)}
+
+  footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:40px;padding:0 18px}
+  footer .en{font-family:'Lora',serif;font-style:italic}
+
+  @media(max-width:520px){
+    h1{font-size:1.7rem}.day-n{min-width:44px;font-size:.82rem}
+    .day-head{padding:12px 12px;gap:10px}.wrap{padding:0 12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hero-inner">
+    <div class="kicker">تحدٍّ يومي · من A2 لطلاقة أعلى</div>
+    <h1>تسعون يوماً<br><span class="en">to speak English</span></h1>
+    <p class="sub">موضوع كل يوم. تذاكره، تحفظ كلماته وبلوكاته، تسجّل صوتك، وتجاوب أسئلة التحقق — وبعدها بس تشطّبه. لو جاوبت أقل من 8 من 10، الموضوع يتعاد.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="progress-card">
+    <div class="ring" id="ring"><b id="ringTxt">0%</b></div>
+    <div class="p-meta">
+      <div class="big"><span id="doneCount">0</span> من 90 موضوع</div>
+      <div class="small">فضل <span id="leftCount">90</span> يوم على خط النهاية</div>
+      <div class="streak" id="streakTxt"></div>
+    </div>
+    <button class="reset" id="resetBtn">تصفير التقدّم</button>
+  </div>
+</div>
+
+<div class="wrap" id="app"></div>
+
+<footer>
+  <p>القاعدة الذهبية: اليوم اللي متقدرش تذاكر فيه، اعمل ٥ دقايق بس — <span class="en">just don't break the chain.</span> 🔥</p>
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const PHASES = [
+  {name:"الأساسيات والقواعد التأسيسية", rng:"Days 1–20"},
+  {name:"مفردات الحياة اليومية", rng:"Days 21–41"},
+  {name:"قواعد المستوى المتوسط المبكر", rng:"Days 42–60"},
+  {name:"مواقف تواصلية", rng:"Days 61–80"},
+  {name:"تثبيت وربط نحو A2+", rng:"Days 81–90"},
+];
+
+// full = fully detailed day. others carry title only (expandable later).
+const DAYS = [
+  {n:1,p:0,t:"الأبجدية والنطق",en:"Alphabet & Pronunciation",full:{
+    src:`اتفرّج على <b>BBC Learning English — Tim's Pronunciation Workshop</b> (يوتيوب)، وجرّب أي كلمة على <b>Cambridge Dictionary</b> واضغط 🔊. ركّز على الأصوات: th / v / w / p.`,
+    cond:["اتفرجت على فيديو عن النطق","استخرجت 15–20 كلمة وحطّيتهم في Anki","حفظت 3–5 بلوكات","كتبت 10 جمل + موضوع قصير (5–7 جمل)","سجّلت صوتي + عملت shadowing","جاوبت 8/10 في أسئلة التحقق"],
+    vocab:[["three","ثري","تلاتة"],["think","ثينك","يفكّر"],["mother","مَذَر","أم"],["father","فاذَر","أب"],["water","وُوتَر","ماية"],["very","فيري","جداً"],["village","فيلِدج","قرية"],["window","ويندو","شبّاك"],["people","بيبل","ناس"],["weather","وِذَر","طقس"],["voice","فويس","صوت"],["white","وايت","أبيض"],["seven","سيفن","سبعة"],["photo","فوتو","صورة"],["birthday","بيرثداي","عيد ميلاد"]],
+    chunks:[["Thank you very much.","شكراً جزيلاً"],["What's the weather like today?","الجو عامل إزاي النهارده؟"],["I think so.","أعتقد كده"],["Nice to meet you.","تشرّفنا"],["Can you say that again, please?","ممكن تعيد تاني لو سمحت؟"]],
+    qs:["كلمة three بتبدأ بصوت th ناعم ولا خشن؟","اكتب كلمتين فيهم صوت v.","إيه الفرق في الشفايف بين w و v؟","كلمة mother فيها th ناعم ولا خشن؟","صحّح: حد نطق very زي ferry — إيه الغلط؟","ترجم: طقس / قرية / صوت.","استخدم people في جملة.","إيه معنى birthday؟","سجّل: \"My brother thinks the weather is very nice.\"","عرّف بنفسك في 3 جمل بصوتك."],
+    ans:"1) ناعم (بدون صوت). 2) very, voice, seven, love… 3) w الشفايف مدوّرة ومقفولة، v سنان فوق على شفة تحت. 4) خشن (بصوت). 5) لازم يستبدل صوت f بصوت v مهتز. 6) weather / village / voice. 7) مثال: There are many people here. 8) عيد ميلاد."
+  }},
+  {n:2,p:0,t:"التحيات والوداع",en:"Greetings & Farewells",full:{
+    src:`ابحث في يوتيوب: <b>English greetings formal and informal</b>. راجع الفرق بين التحية الرسمية وغير الرسمية على <b>British Council LearnEnglish</b>.`,
+    cond:["اتفرجت على فيديو عن التحيات","استخرجت 15–20 كلمة/تعبير وحطّيتهم في Anki","حفظت 3–5 بلوكات","كتبت حوار قصير (تحية + وداع)","سجّلت صوتي + عملت shadowing","جاوبت 8/10 في أسئلة التحقق"],
+    vocab:[["Hello / Hi","هيلو / هاي","أهلاً"],["Good morning","جود مورنِنج","صباح الخير"],["Good afternoon","جود آفتَرنون","مساء الخير (ظهراً)"],["Good evening","جود إيفنِنج","مساء الخير"],["Goodbye / Bye","جودباي / باي","مع السلامة"],["See you later","سي يو ليتَر","أشوفك بعدين"],["How are you?","هاو آر يو","إزيّك؟"],["I'm fine, thanks","آيم فاين","كويّس، شكراً"],["Take care","تيك كير","خُد بالك من نفسك"],["Have a nice day","هاف أ نايس داي","يومك سعيد"],["Welcome","ويلكَم","أهلاً بيك"],["Long time no see","لونج تايم نو سي","وحشتني / زمان"]],
+    chunks:[["How's it going?","الأمور ماشية إزاي؟"],["Nice to see you again.","سعيد إني شُفتك تاني"],["See you tomorrow.","أشوفك بكرة"],["Have a good one!","يومك جميل!"],["Catch you later.","نتكلّم بعدين"]],
+    qs:["إيه الفرق بين Good afternoon و Good evening؟","تحية رسمية vs غير رسمية — هات مثال لكل واحدة.","رُد على: How are you?","إيه معنى Long time no see؟","اكتب وداع غير رسمي.","ترجم: خُد بالك من نفسك.","امتى تقول Good morning؟","كمّل: Nice to ___ you.","سجّل حوار تحية قصير بصوتك.","اكتب 3 طرق مختلفة تقول بيها مع السلامة."],
+    ans:"1) afternoon من الظهر لـ 5–6 مساءً، evening بعد كده. 2) رسمي: Good morning, sir / غير رسمي: Hi! 3) I'm fine, thanks. And you? 4) وحشتني/زمان ما شفتكش. 5) Bye! / See ya! 6) Take care. 7) من الصبح لحد الظهر. 8) meet / see. 10) Goodbye / See you / Take care."
+  }},
+  {n:3,p:0,t:"تقديم النفس",en:"Introducing Yourself"},
+  {n:4,p:0,t:"الضمائر الشخصية",en:"Personal Pronouns"},
+  {n:5,p:0,t:"فعل to be — المضارع",en:"Verb to be (am/is/are)"},
+  {n:6,p:0,t:"فعل to be — النفي والسؤال",en:"to be — negative & questions"},
+  {n:7,p:0,t:"مراجعة الأسبوع الأول",en:"Week 1 review",rev:true},
+  {n:8,p:0,t:"أدوات التعريف والتنكير",en:"a / an / the"},
+  {n:9,p:0,t:"المفرد والجمع",en:"Singular & Plural"},
+  {n:10,p:0,t:"أسماء الإشارة",en:"This / That / These / Those"},
+  {n:11,p:0,t:"الملكية بـ have/has got",en:"Have / Has got"},
+  {n:12,p:0,t:"أدوات الملكية",en:"Possessive adjectives"},
+  {n:13,p:0,t:"الصفات وترتيبها",en:"Adjectives & order"},
+  {n:14,p:0,t:"مراجعة الأسبوع الثاني",en:"Week 2 review",rev:true},
+  {n:15,p:0,t:"الأرقام",en:"Numbers (cardinal & ordinal)"},
+  {n:16,p:0,t:"There is / There are",en:"There is / There are"},
+  {n:17,p:0,t:"المضارع البسيط — الإثبات",en:"Present Simple — affirmative"},
+  {n:18,p:0,t:"المضارع البسيط — النفي والسؤال",en:"Present Simple — do/does"},
+  {n:19,p:0,t:"أدوات السؤال",en:"Question words"},
+  {n:20,p:0,t:"المضارع المستمر",en:"Present Continuous"},
+  {n:21,p:1,t:"مراجعة + البسيط vs المستمر",en:"Simple vs Continuous",rev:true},
+  {n:22,p:1,t:"can / can't",en:"Ability & requests"},
+  {n:23,p:1,t:"الألوان",en:"Colors"},
+  {n:24,p:1,t:"أيام الأسبوع والشهور والمواسم",en:"Days, months, seasons"},
+  {n:25,p:1,t:"الوقت",en:"Telling the time"},
+  {n:26,p:1,t:"أفراد العائلة",en:"Family members"},
+  {n:27,p:1,t:"المهن والوظائف",en:"Jobs & professions"},
+  {n:28,p:1,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:29,p:1,t:"الجنسيات والبلاد",en:"Nationalities & countries"},
+  {n:30,p:1,t:"اللغات",en:"Languages"},
+  {n:31,p:1,t:"الهوايات",en:"Hobbies"},
+  {n:32,p:1,t:"أجزاء الجسم",en:"Parts of the body"},
+  {n:33,p:1,t:"الملابس",en:"Clothes"},
+  {n:34,p:1,t:"الطعام والشراب",en:"Food & drink"},
+  {n:35,p:1,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:36,p:1,t:"الفواكه والخضروات",en:"Fruits & vegetables"},
+  {n:37,p:1,t:"الحيوانات",en:"Animals"},
+  {n:38,p:1,t:"البيت والغرف",en:"House & rooms"},
+  {n:39,p:1,t:"الأثاث والأدوات المنزلية",en:"Furniture & household"},
+  {n:40,p:1,t:"المدينة والأماكن العامة",en:"City & public places"},
+  {n:41,p:1,t:"وسائل المواصلات",en:"Transport"},
+  {n:42,p:2,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:43,p:2,t:"الطقس",en:"Weather"},
+  {n:44,p:2,t:"المشاعر",en:"Feelings & emotions"},
+  {n:45,p:2,t:"الصفات وأضدادها",en:"Adjectives & opposites"},
+  {n:46,p:2,t:"الماضي البسيط لـ to be",en:"was / were"},
+  {n:47,p:2,t:"الماضي البسيط — أفعال منتظمة",en:"Past Simple — regular"},
+  {n:48,p:2,t:"الماضي البسيط — أفعال شاذة",en:"Past Simple — irregular"},
+  {n:49,p:2,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:50,p:2,t:"الماضي البسيط — النفي والسؤال",en:"Past Simple — did"},
+  {n:51,p:2,t:"المستقبل بـ going to",en:"Future — going to"},
+  {n:52,p:2,t:"المستقبل بـ will",en:"Future — will"},
+  {n:53,p:2,t:"الفرق بين will و going to",en:"will vs going to"},
+  {n:54,p:2,t:"المستقبل بالمضارع المستمر",en:"Present Continuous for future"},
+  {n:55,p:2,t:"أحوال التكرار",en:"Adverbs of frequency"},
+  {n:56,p:2,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:57,p:2,t:"حروف الجر للمكان",en:"Prepositions of place"},
+  {n:58,p:2,t:"حروف الجر للزمن",en:"Prepositions of time"},
+  {n:59,p:2,t:"المعدود وغير المعدود",en:"Countable / Uncountable"},
+  {n:60,p:2,t:"some / any / much / many",en:"Quantifiers"},
+  {n:61,p:3,t:"المقارنة",en:"Comparatives"},
+  {n:62,p:3,t:"التفضيل",en:"Superlatives"},
+  {n:63,p:3,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:64,p:3,t:"صيغة الأمر",en:"Imperatives"},
+  {n:65,p:3,t:"would like / want",en:"Polite requests"},
+  {n:66,p:3,t:"must / have to",en:"Obligation"},
+  {n:67,p:3,t:"should / shouldn't",en:"Advice"},
+  {n:68,p:3,t:"الظروف الزمنية",en:"ago / already / yet"},
+  {n:69,p:3,t:"في المطعم",en:"At the restaurant"},
+  {n:70,p:3,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:71,p:3,t:"في المتجر / التسوق",en:"Shopping"},
+  {n:72,p:3,t:"في الفندق",en:"At the hotel"},
+  {n:73,p:3,t:"في المطار والسفر",en:"Airport & travel"},
+  {n:74,p:3,t:"عند الطبيب",en:"At the doctor"},
+  {n:75,p:3,t:"السؤال عن الاتجاهات",en:"Asking for directions"},
+  {n:76,p:3,t:"المكالمات الهاتفية",en:"Phone calls"},
+  {n:77,p:3,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:78,p:3,t:"وصف الأشخاص",en:"Describing people"},
+  {n:79,p:3,t:"وصف الأماكن",en:"Describing places"},
+  {n:80,p:3,t:"وصف البيت والعائلة",en:"Describing home & family"},
+  {n:81,p:4,t:"التحدث عن الهوايات",en:"Talking about hobbies"},
+  {n:82,p:4,t:"الإعجاب وعدمه",en:"like / hate / prefer"},
+  {n:83,p:4,t:"طلب المساعدة والاعتذار والشكر",en:"Help, sorry & thanks"},
+  {n:84,p:4,t:"مراجعة الأسبوع",en:"Weekly review",rev:true},
+  {n:85,p:4,t:"المضارع التام — مقدمة",en:"Present Perfect — intro"},
+  {n:86,p:4,t:"Present Perfect + ever/never/just/yet",en:"Present Perfect signals"},
+  {n:87,p:4,t:"الفرق بين التام والماضي البسيط",en:"Present Perfect vs Past"},
+  {n:88,p:4,t:"Phrasal verbs الشائعة",en:"Common phrasal verbs"},
+  {n:89,p:4,t:"الشرط الأول + أدوات الربط",en:"First conditional & linkers"},
+  {n:90,p:4,t:"مراجعة شاملة + فقرة عن نفسك",en:"Final review & writing"},
+];
+
+/* ------------- STATE ------------- */
+const KEY="eng90_progress_v1";
+let done={};
+try{ const s=localStorage.getItem(KEY); if(s) done=JSON.parse(s); }catch(e){ done={}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(done)); }catch(e){} }
+
+/* ------------- RENDER ------------- */
+const app=document.getElementById('app');
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+
+function detailHTML(d){
+  if(!d.full){
+    return `<div class="detail-in"><p class="todo-note">التفاصيل الكاملة للموضوع ده (كلمات + بلوكات + أسئلة تحقق) بنجهّزها سوا في الشات يوم ما توصله. دلوقتي عدّي عليه بشروط العبور الأساسية.</p>
+      <h4>شروط العبور</h4><ul class="cond">
+      <li>اتفرجت على فيديو/بودكاست عن الموضوع</li><li>استخرجت 15–20 كلمة في Anki</li>
+      <li>حفظت 3–5 بلوكات</li><li>كتبت 10 جمل + موضوع قصير</li>
+      <li>سجّلت صوتي + shadowing</li><li>جاوبت 8/10 في أسئلة التحقق</li></ul>
+      ${markBtn(d)}</div>`;
+  }
+  const f=d.full;
+  return `<div class="detail-in">
+    <h4>المصدر <span class="em">— 20 دقيقة</span></h4><p class="src">${f.src}</p>
+    <h4>شروط العبور</h4><ul class="cond">${f.cond.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+    <h4>الكلمات <span class="em">— حطّهم في Anki</span></h4>
+    <table class="vocab">${f.vocab.map(v=>`<tr><td>${esc(v[0])}</td><td>${esc(v[1])}</td><td>${esc(v[2])}</td></tr>`).join("")}</table>
+    <h4>البلوكات <span class="em">— Chunks</span></h4><div class="chunks">${f.chunks.map(c=>`<div class="chunk"><span class="en">${esc(c[0])}</span><span class="ar">${esc(c[1])}</span></div>`).join("")}</div>
+    <h4>أسئلة التحقق <span class="em">— جاوب من غير ما تبصّ</span></h4><ol class="qs">${f.qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>
+    <details class="ans"><summary>الإجابات</summary><div class="ans-body">${esc(f.ans)}</div></details>
+    ${markBtn(d)}
+  </div>`;
+}
+function markBtn(d){
+  const isDone=!!done[d.n];
+  return `<button class="mark-btn" data-mark="${d.n}">${isDone?"↺ رجّعه لسه مخلصتوش":"✓ خلّصت اليوم ده — اشطبه"}</button>`;
+}
+
+function render(){
+  let html="";
+  PHASES.forEach((ph,pi)=>{
+    html+=`<div class="phase"><h2>${esc(ph.name)}</h2><span class="rng">${ph.rng}</span><span class="phase-line"></span></div>`;
+    DAYS.filter(d=>d.p===pi).forEach(d=>{
+      const isDone=!!done[d.n];
+      html+=`<div class="day${isDone?' done':''}" data-day="${d.n}">
+        <div class="day-head" data-toggle="${d.n}">
+          <div class="chk" data-mark="${d.n}"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-9"/></svg></div>
+          <span class="day-n">Day ${String(d.n).padStart(2,'0')}</span>
+          <span class="day-t">${esc(d.t)} <span class="en">${esc(d.en)}</span></span>
+          ${d.rev?'<span class="rev-badge">مراجعة</span>':''}
+          <svg class="caret" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
+        </div>
+        <div class="detail" id="det-${d.n}"></div>
+      </div>`;
+    });
+  });
+  app.innerHTML=html;
+  updateProgress();
+}
+
+/* ------------- INTERACTIONS ------------- */
+app.addEventListener('click',e=>{
+  const mark=e.target.closest('[data-mark]');
+  if(mark){ e.stopPropagation(); toggleDone(+mark.dataset.mark); return; }
+  const tog=e.target.closest('[data-toggle]');
+  if(tog){ toggleOpen(+tog.dataset.toggle); }
+});
+
+function toggleOpen(n){
+  const day=app.querySelector(`.day[data-day="${n}"]`);
+  const det=document.getElementById('det-'+n);
+  const isOpen=day.classList.contains('open');
+  if(isOpen){ det.style.maxHeight='0'; day.classList.remove('open'); }
+  else{
+    if(!det.dataset.built){ det.innerHTML=detailHTML(DAYS.find(d=>d.n===n)); det.dataset.built="1"; }
+    day.classList.add('open'); det.style.maxHeight=det.scrollHeight+'px';
+    setTimeout(()=>{ if(day.classList.contains('open')) det.style.maxHeight='none'; },360);
+  }
+}
+function toggleDone(n){
+  done[n]=!done[n]; if(!done[n]) delete done[n];
+  save();
+  const day=app.querySelector(`.day[data-day="${n}"]`);
+  day.classList.toggle('done',!!done[n]);
+  const det=document.getElementById('det-'+n);
+  if(det.dataset.built){ det.innerHTML=detailHTML(DAYS.find(d=>d.n===n)); if(day.classList.contains('open')) det.style.maxHeight='none'; }
+  updateProgress();
+}
+
+function updateProgress(){
+  const c=Object.keys(done).length;
+  const pct=Math.round(c/90*100);
+  document.getElementById('doneCount').textContent=c;
+  document.getElementById('leftCount').textContent=90-c;
+  document.getElementById('ringTxt').textContent=pct+'%';
+  document.getElementById('ring').style.setProperty('--p',pct);
+  const streak=document.getElementById('streakTxt');
+  if(c===0) streak.textContent="";
+  else if(c<90) streak.textContent=`ماشي — كمّل السلسلة 🔥`;
+  else streak.textContent="🏁 خلّصت الـ90! مبروك — دلوقتي ثبّت وكرّر.";
+}
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm("متأكد؟ ده هيصفّر كل المواضيع المشطوبة.")){ done={}; save(); render(); }
+});
+
+render();
+</script>
+</body>
+</html>
