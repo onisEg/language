@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تحدي الـ 90 يوم — إنجليزي</title>
+<meta name="description" content="خطة تحدّي مدتها 90 يوماً لتعلّم الإنجليزي: موضوع كل يوم بكلماته وبلوكاته وأسئلة تحقّق، مع تتبّع تقدّم يُحفظ محلياً على جهازك.">
+<meta name="theme-color" content="#3f6b4f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="تحدي الـ 90 يوم — إنجليزي">
+<meta property="og:description" content="خطة تحدّي مدتها 90 يوماً لتعلّم الإنجليزي: موضوع كل يوم بكلماته وبلوكاته وأسئلة تحقّق، مع تتبّع تقدّم يُحفظ محلياً على جهازك.">
+<meta property="og:url" content="https://oniseg.github.io/language/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://oniseg.github.io/language/">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyNCIgZmlsbD0iIzNmNmI0ZiIvPgo8ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYxZTYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KPHBhdGggZD0iTTUwIDMzIEM0MSAyNyAyOSAyNyAyMSAzMCBMMjEgNzEgQzI5IDY4IDQxIDY4IDUwIDc0Ii8+CjxwYXRoIGQ9Ik01MCAzMyBDNTkgMjcgNzEgMjcgNzkgMzAgTDc5IDcxIEM3MSA2OCA1OSA2OCA1MCA3NCIvPgo8cGF0aCBkPSJNNTAgMzMgVjc0Ii8+CjwvZz4KPHJlY3QgeD0iNjMiIHk9IjI3IiB3aWR0aD0iOCIgaGVpZ2h0PSIyMiIgcng9IjEuNSIgZmlsbD0iI2M5OTMyYSIvPgo8L3N2Zz4K">
 <script>try{var _t=localStorage.getItem('eng90_theme');if(_t==='light'||_t==='dark')document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -153,6 +161,14 @@
   @media(max-width:520px){
     h1{font-size:1.7rem}.day-n{min-width:44px;font-size:.82rem}
     .day-head{padding:12px 12px;gap:10px}.wrap{padding:0 12px}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .detail,.caret,.chk svg,.ring{transition:none!important}
+  }
+
+  .day-head:focus-visible,.chk:focus-visible,.reset:focus-visible,.mark-btn:focus-visible,.ans summary:focus-visible{
+    outline:2px solid var(--clay);outline-offset:2px;
   }
 </style>
 </head>
@@ -347,10 +363,10 @@ function render(){
     DAYS.filter(d=>d.p===pi).forEach(d=>{
       const isDone=!!done[d.n];
       html+=`<div class="day${isDone?' done':''}" data-day="${d.n}">
-        <div class="day-head" data-toggle="${d.n}">
-          <div class="chk" data-mark="${d.n}"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-9"/></svg></div>
+        <div class="day-head" data-toggle="${d.n}" role="button" tabindex="0" aria-expanded="false" aria-controls="det-${d.n}">
+          <div class="chk" data-mark="${d.n}" role="checkbox" tabindex="0" aria-checked="${isDone}" aria-label="خلّصت يوم ${d.n}"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-9"/></svg></div>
           <span class="day-n">Day ${String(d.n).padStart(2,'0')}</span>
-          <span class="day-t">${esc(d.t)} <span class="en">${esc(d.en)}</span></span>
+          <span class="day-t">${esc(d.t)} <span class="en" lang="en">${esc(d.en)}</span></span>
           ${d.rev?'<span class="rev-badge">مراجعة</span>':''}
           <svg class="caret" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>
         </div>
@@ -369,15 +385,27 @@ app.addEventListener('click',e=>{
   const tog=e.target.closest('[data-toggle]');
   if(tog){ toggleOpen(+tog.dataset.toggle); }
 });
+app.addEventListener('keydown',e=>{
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const mark=e.target.closest('[data-mark]');
+  if(mark){ e.preventDefault(); e.stopPropagation(); toggleDone(+mark.dataset.mark); return; }
+  const tog=e.target.closest('[data-toggle]');
+  if(tog){ e.preventDefault(); toggleOpen(+tog.dataset.toggle); }
+});
 
 function toggleOpen(n){
   const day=app.querySelector(`.day[data-day="${n}"]`);
   const det=document.getElementById('det-'+n);
+  const head=day.querySelector('[data-toggle]');
   const isOpen=day.classList.contains('open');
-  if(isOpen){ det.style.maxHeight='0'; day.classList.remove('open'); }
-  else{
+  if(isOpen){
+    det.style.maxHeight=det.scrollHeight+'px'; // lock current pixel height so the collapse can animate
+    requestAnimationFrame(()=>{ det.style.maxHeight='0'; });
+    day.classList.remove('open'); head.setAttribute('aria-expanded','false');
+  } else {
     if(!det.dataset.built){ det.innerHTML=detailHTML(DAYS.find(d=>d.n===n)); det.dataset.built="1"; }
-    day.classList.add('open'); det.style.maxHeight=det.scrollHeight+'px';
+    day.classList.add('open'); head.setAttribute('aria-expanded','true');
+    det.style.maxHeight=det.scrollHeight+'px';
     setTimeout(()=>{ if(day.classList.contains('open')) det.style.maxHeight='none'; },360);
   }
 }
@@ -386,6 +414,8 @@ function toggleDone(n){
   save();
   const day=app.querySelector(`.day[data-day="${n}"]`);
   day.classList.toggle('done',!!done[n]);
+  const chk=day.querySelector('[data-mark]');
+  if(chk) chk.setAttribute('aria-checked', done[n]?'true':'false');
   const det=document.getElementById('det-'+n);
   if(det.dataset.built){ det.innerHTML=detailHTML(DAYS.find(d=>d.n===n)); if(day.classList.contains('open')) det.style.maxHeight='none'; }
   updateProgress();
