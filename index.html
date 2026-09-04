@@ -13,6 +13,11 @@
 <meta name="twitter:card" content="summary">
 <link rel="canonical" href="https://oniseg.github.io/language/">
 <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyNCIgZmlsbD0iIzNmNmI0ZiIvPgo8ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmNWYxZTYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KPHBhdGggZD0iTTUwIDMzIEM0MSAyNyAyOSAyNyAyMSAzMCBMMjEgNzEgQzI5IDY4IDQxIDY4IDUwIDc0Ii8+CjxwYXRoIGQ9Ik01MCAzMyBDNTkgMjcgNzEgMjcgNzkgMzAgTDc5IDcxIEM3MSA2OCA1OSA2OCA1MCA3NCIvPgo8cGF0aCBkPSJNNTAgMzMgVjc0Ii8+CjwvZz4KPHJlY3QgeD0iNjMiIHk9IjI3IiB3aWR0aD0iOCIgaGVpZ2h0PSIyMiIgcng9IjEuNSIgZmlsbD0iI2M5OTMyYSIvPgo8L3N2Zz4K">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="90 يوم">
 <script>try{var _t=localStorage.getItem('eng90_theme');if(_t==='light'||_t==='dark')document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,6 +175,79 @@
   .day-head:focus-visible,.chk:focus-visible,.reset:focus-visible,.mark-btn:focus-visible,.ans summary:focus-visible{
     outline:2px solid var(--clay);outline-offset:2px;
   }
+
+  /* ---- Streak meta ---- */
+  .streak-best{font-size:.82rem;color:var(--muted);margin-top:1px}
+
+  /* ---- Control bar: search + continue ---- */
+  .controls{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap;align-items:center}
+  .search-wrap{position:relative;flex:1;min-width:200px}
+  .search-wrap .mag{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);
+    width:16px;height:16px;color:var(--muted);pointer-events:none}
+  #searchBox{
+    width:100%;font-family:inherit;font-size:.92rem;color:var(--ink);
+    background:var(--paper);border:1.5px solid var(--line);border-radius:10px;
+    padding:10px 38px 10px 38px;
+  }
+  #searchBox::placeholder{color:var(--muted)}
+  #searchBox:focus{outline:none;border-color:var(--moss)}
+  .clear-search{
+    position:absolute;inset-inline-end:8px;top:50%;transform:translateY(-50%);
+    background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;
+    line-height:1;padding:4px 6px;border-radius:6px;display:none;
+  }
+  .clear-search:hover{color:var(--clay)}
+  .search-wrap.has-value .clear-search{display:block}
+  .continue-btn{
+    background:var(--moss-soft);color:var(--moss);border:1.5px solid var(--moss);
+    font-family:inherit;font-weight:600;font-size:.88rem;padding:10px 16px;border-radius:10px;
+    cursor:pointer;white-space:nowrap;transition:.2s;
+  }
+  .continue-btn:hover{filter:brightness(.97)}
+  .continue-btn:disabled{opacity:.45;cursor:default;filter:none}
+  .search-count{font-size:.83rem;color:var(--muted);margin:2px 2px 0}
+  .no-results{text-align:center;color:var(--muted);font-size:.92rem;padding:40px 10px;font-style:italic}
+  .is-hidden{display:none!important}
+  .day.flash{animation:flash 1.1s ease}
+  @keyframes flash{0%,100%{border-color:var(--line)}25%,60%{border-color:var(--gold)}}
+
+  /* ---- Pronunciation ---- */
+  .spk{
+    background:none;border:1px solid transparent;color:var(--muted);cursor:pointer;
+    padding:3px;border-radius:6px;display:inline-grid;place-items:center;
+    line-height:0;transition:.15s;flex-shrink:0;
+  }
+  .spk svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;
+    stroke-linecap:round;stroke-linejoin:round}
+  .spk:hover{color:var(--moss);border-color:var(--line)}
+  .spk.speaking{color:var(--clay)}
+  .spk.speaking svg{animation:pulse .7s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .vocab td.spk-cell{width:30px;padding:6px 2px;text-align:center}
+  .chunk{position:relative}
+  .chunk .spk{position:absolute;inset-inline-end:6px;top:6px}
+  .chunk .en{padding-inline-end:26px}
+  .no-tts .spk{display:none}
+
+  /* ---- Update toast ---- */
+  .toast{
+    position:fixed;inset-inline:14px;bottom:14px;margin:0 auto;max-width:420px;z-index:50;
+    background:var(--paper);border:1.5px solid var(--moss);border-radius:12px;
+    padding:12px 16px;box-shadow:0 6px 22px var(--shadow);
+    display:flex;align-items:center;gap:12px;font-size:.9rem;
+  }
+  .toast button{
+    background:var(--moss);color:var(--paper);border:none;font-family:inherit;font-weight:700;
+    font-size:.85rem;padding:7px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;
+  }
+
+  @media(max-width:520px){
+    .controls{gap:8px}
+    .continue-btn{width:100%}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .spk.speaking svg,.day.flash{animation:none!important}
+  }
 </style>
 </head>
 <body>
@@ -188,12 +266,31 @@
       <div class="big"><span id="doneCount">0</span> من 90 موضوع</div>
       <div class="small">فضل <span id="leftCount">90</span> يوم على خط النهاية</div>
       <div class="streak" id="streakTxt"></div>
+      <div class="streak-best" id="streakBest"></div>
     </div>
     <div class="pcard-btns">
       <button class="reset" id="themeBtn" title="تبديل الوضع الفاتح/الغامق" aria-label="تبديل الوضع"></button>
+      <button class="reset" id="exportBtn" title="نزّل نسخة من تقدّمك">⬇ حفظ نسخة</button>
+      <button class="reset" id="importBtn" title="ارفع نسخة محفوظة">⬆ استرجاع</button>
       <button class="reset" id="resetBtn">تصفير التقدّم</button>
     </div>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
   </div>
+</div>
+
+<div class="wrap">
+  <div class="controls">
+    <div class="search-wrap" id="searchWrap">
+      <svg class="mag" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L18 18"/></svg>
+      <input type="search" id="searchBox" autocomplete="off"
+             placeholder="دوّر على موضوع، كلمة، أو رقم يوم…"
+             aria-label="بحث في المواضيع والكلمات">
+      <button class="clear-search" id="clearSearch" aria-label="مسح البحث">×</button>
+    </div>
+    <button class="continue-btn" id="continueBtn">↩ كمّل من هنا</button>
+  </div>
+  <div class="search-count" id="searchCount" aria-live="polite"></div>
 </div>
 
 <div class="wrap" id="app"></div>
@@ -320,15 +417,104 @@ const DAYS = [
   {n:90,p:4,t:"مراجعة شاملة + فقرة عن نفسك",en:"Final review & writing",rev:true,full:{src:"راجع كل المراحل، وبعدين اكتب فقرة (10–12 جملة) عن نفسك: مين إنت، شغلك، هواياتك، يومك، وخططك — واقراها بصوت عالي وسجّلها.",cond:["راجعت كل كلمات وبلوكات الأسبوع في Anki", "أعدت حل تمارين الأيام اللي فاتت", "كتبت فقرة بتجمع مواضيع الأسبوع", "سجّلت نفسي وأنا بتكلّم عن الأسبوع", "صحّحت أخطائي من الأيام السابقة", "جاوبت 8/10 في أسئلة المراجعة"],vocab:[["introduce", "إنتروديوس", "يعرّف"], ["routine", "روتين", "روتين"], ["past", "باست", "ماضي"], ["future", "فيوتشر", "مستقبل"], ["experience", "إكسبيريِنس", "خبرة"], ["describe", "دِسكرايب", "يوصف"], ["plan", "بلان", "خطة"], ["fluent", "فلوِنت", "طليق"], ["confident", "كونفيدِنت", "واثق"], ["proud", "براود", "فخور"]],chunks:[["My name is... and I'm from...", "اسمي... وأنا من..."], ["I work as...", "بشتغل..."], ["In my free time, I...", "في وقت فراغي..."], ["Yesterday, I...", "إمبارح..."], ["In the future, I'm going to...", "في المستقبل هـ..."]],qs:["عرّف بنفسك (اسم، بلد، شغل).", "احكي روتينك اليومي (3 جمل بالمضارع البسيط).", "احكي حاجة عملتها إمبارح (ماضي).", "احكي خطة ليك في المستقبل (going to/will).", "احكي خبرة عملتها في حياتك (present perfect).", "اوصف نفسك (شكل + شخصية).", "احكي هواياتك وتفضيلاتك.", "قارن حاجتين وفضّل واحدة.", "اكتب فقرة كاملة (10–12 جملة) تجمع كل ده.", "اقرا الفقرة بصوت عالي وسجّلها — وقارن بتسجيلك في يوم 1."],ans:"مفيش إجابة واحدة — ده يوم إنتاج. المعيار: تكتب فقرة مترابطة بأزمنة صح (مضارع/ماضي/مستقبل/تام)، وتنطقها بثقة. قارن تسجيلك النهاردة بتسجيل يوم 1 وشوف الفرق. 🎉"}},
 ];
 
-/* ------------- STATE ------------- */
-const KEY="eng90_progress_v1";
+/* ------------- STATE -------------
+   v2 stores a date per finished day: { "3": "2026-03-14" }.
+   v1 stored { "3": true } — migrated below to the "?" sentinel
+   (counts as done, but carries no date so it can't feed the streak). */
+const KEY="eng90_progress_v2";
+const OLD_KEY="eng90_progress_v1";
+const NO_DATE="?";
 let done={};
-try{ const s=localStorage.getItem(KEY); if(s) done=JSON.parse(s); }catch(e){ done={}; }
+(function load(){
+  try{
+    const s=localStorage.getItem(KEY);
+    if(s){ done=JSON.parse(s)||{}; return; }
+    const old=localStorage.getItem(OLD_KEY);
+    if(old){
+      const o=JSON.parse(old)||{};
+      Object.keys(o).forEach(k=>{ if(o[k]) done[k]=NO_DATE; });
+      save();
+    }
+  }catch(e){ done={}; }
+})();
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(done)); }catch(e){} }
+
+function todayStr(d){
+  d=d||new Date();
+  const p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+}
+function dayDiff(a,b){ // whole days between two YYYY-MM-DD strings
+  const pa=a.split('-').map(Number), pb=b.split('-').map(Number);
+  const da=Date.UTC(pa[0],pa[1]-1,pa[2]), db=Date.UTC(pb[0],pb[1]-1,pb[2]);
+  return Math.round((db-da)/86400000);
+}
+function studyDates(){
+  return [...new Set(Object.values(done).filter(v=>v&&v!==NO_DATE))].sort();
+}
+function computeStreak(){
+  const ds=studyDates();
+  if(!ds.length) return {current:0,best:0,studiedToday:false};
+  let best=1,run=1;
+  for(let i=1;i<ds.length;i++){
+    run = dayDiff(ds[i-1],ds[i])===1 ? run+1 : 1;
+    if(run>best) best=run;
+  }
+  const t=todayStr(), last=ds[ds.length-1], gap=dayDiff(last,t);
+  let current=0;
+  if(gap===0||gap===1){
+    current=1;
+    for(let i=ds.length-1;i>0;i--){
+      if(dayDiff(ds[i-1],ds[i])===1) current++; else break;
+    }
+  }
+  return {current,best,studiedToday:gap===0};
+}
 
 /* ------------- RENDER ------------- */
 const app=document.getElementById('app');
 function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function escAttr(s){return esc(s).replace(/"/g,"&quot;");}
+
+/* ------------- PRONUNCIATION ------------- */
+const TTS = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+if(!TTS) document.documentElement.classList.add('no-tts');
+let enVoice=null;
+function pickVoice(){
+  if(!TTS) return;
+  const vs=speechSynthesis.getVoices().filter(v=>/^en(-|_|$)/i.test(v.lang));
+  if(!vs.length) return;
+  enVoice = vs.find(v=>/^en-GB/i.test(v.lang) && !v.localService)
+         || vs.find(v=>/^en-US/i.test(v.lang) && !v.localService)
+         || vs.find(v=>/^en-GB/i.test(v.lang))
+         || vs.find(v=>/^en-US/i.test(v.lang))
+         || vs[0];
+}
+if(TTS){
+  pickVoice();
+  speechSynthesis.addEventListener('voiceschanged', pickVoice);
+}
+let speakingBtn=null;
+function speak(text, btn){
+  if(!TTS||!text) return;
+  speechSynthesis.cancel();
+  if(speakingBtn) speakingBtn.classList.remove('speaking');
+  // Clicking the button that is already talking just stops it.
+  if(speakingBtn===btn){ speakingBtn=null; return; }
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang = enVoice ? enVoice.lang : 'en-US';
+  if(enVoice) u.voice=enVoice;
+  u.rate=0.9;
+  const clear=()=>{ if(btn) btn.classList.remove('speaking'); if(speakingBtn===btn) speakingBtn=null; };
+  u.onend=clear; u.onerror=clear;
+  if(btn){ btn.classList.add('speaking'); speakingBtn=btn; }
+  speechSynthesis.speak(u);
+}
+const SPK_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>';
+function spkBtn(text){
+  if(!TTS) return '';
+  return `<button class="spk" data-say="${escAttr(text)}" aria-label="اسمع النطق: ${escAttr(text)}" title="اسمع النطق">${SPK_SVG}</button>`;
+}
 
 function detailHTML(d){
   if(!d.full){
@@ -344,8 +530,8 @@ function detailHTML(d){
     <h4>المصدر <span class="em">— 20 دقيقة</span></h4><p class="src">${f.src}</p>
     <h4>شروط العبور</h4><ul class="cond">${f.cond.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
     <h4>الكلمات <span class="em">— حطّهم في Anki</span></h4>
-    <table class="vocab">${f.vocab.map(v=>`<tr><td>${esc(v[0])}</td><td>${esc(v[1])}</td><td>${esc(v[2])}</td></tr>`).join("")}</table>
-    <h4>البلوكات <span class="em">— Chunks</span></h4><div class="chunks">${f.chunks.map(c=>`<div class="chunk"><span class="en">${esc(c[0])}</span><span class="ar">${esc(c[1])}</span></div>`).join("")}</div>
+    <table class="vocab">${f.vocab.map(v=>`<tr><td class="spk-cell">${spkBtn(v[0])}</td><td>${esc(v[0])}</td><td>${esc(v[1])}</td><td>${esc(v[2])}</td></tr>`).join("")}</table>
+    <h4>البلوكات <span class="em">— Chunks</span></h4><div class="chunks">${f.chunks.map(c=>`<div class="chunk">${spkBtn(c[0])}<span class="en">${esc(c[0])}</span><span class="ar">${esc(c[1])}</span></div>`).join("")}</div>
     <h4>أسئلة التحقق <span class="em">— جاوب من غير ما تبصّ</span></h4><ol class="qs">${f.qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>
     <details class="ans"><summary>الإجابات</summary><div class="ans-body">${esc(f.ans)}</div></details>
     ${markBtn(d)}
@@ -359,10 +545,10 @@ function markBtn(d){
 function render(){
   let html="";
   PHASES.forEach((ph,pi)=>{
-    html+=`<div class="phase"><h2>${esc(ph.name)}</h2><span class="rng">${ph.rng}</span><span class="phase-line"></span></div>`;
+    html+=`<div class="phase" data-phase="${pi}"><h2>${esc(ph.name)}</h2><span class="rng">${ph.rng}</span><span class="phase-line"></span></div>`;
     DAYS.filter(d=>d.p===pi).forEach(d=>{
       const isDone=!!done[d.n];
-      html+=`<div class="day${isDone?' done':''}" data-day="${d.n}">
+      html+=`<div class="day${isDone?' done':''}" data-day="${d.n}" data-phase="${pi}">
         <div class="day-head" data-toggle="${d.n}" role="button" tabindex="0" aria-expanded="false" aria-controls="det-${d.n}">
           <div class="chk" data-mark="${d.n}" role="checkbox" tabindex="0" aria-checked="${isDone}" aria-label="خلّصت يوم ${d.n}"><svg viewBox="0 0 20 20"><path d="M4 10l4 4 8-9"/></svg></div>
           <span class="day-n">Day ${String(d.n).padStart(2,'0')}</span>
@@ -374,12 +560,15 @@ function render(){
       </div>`;
     });
   });
-  app.innerHTML=html;
+  app.innerHTML=html+'<p class="no-results is-hidden" id="noResults">مفيش نتائج مطابقة للبحث.</p>';
   updateProgress();
+  if(searchBox && searchBox.value.trim()) applyFilter(searchBox.value);
 }
 
 /* ------------- INTERACTIONS ------------- */
 app.addEventListener('click',e=>{
+  const say=e.target.closest('[data-say]');
+  if(say){ e.stopPropagation(); speak(say.dataset.say, say); return; }
   const mark=e.target.closest('[data-mark]');
   if(mark){ e.stopPropagation(); toggleDone(+mark.dataset.mark); return; }
   const tog=e.target.closest('[data-toggle]');
@@ -410,7 +599,7 @@ function toggleOpen(n){
   }
 }
 function toggleDone(n){
-  done[n]=!done[n]; if(!done[n]) delete done[n];
+  if(done[n]) delete done[n]; else done[n]=todayStr();
   save();
   const day=app.querySelector(`.day[data-day="${n}"]`);
   day.classList.toggle('done',!!done[n]);
@@ -429,14 +618,180 @@ function updateProgress(){
   document.getElementById('ringTxt').textContent=pct+'%';
   document.getElementById('ring').style.setProperty('--p',pct);
   const streak=document.getElementById('streakTxt');
-  if(c===0) streak.textContent="";
-  else if(c<90) streak.textContent=`ماشي — كمّل السلسلة 🔥`;
-  else streak.textContent="🏁 خلّصت الـ90! مبروك — دلوقتي ثبّت وكرّر.";
+  const bestEl=document.getElementById('streakBest');
+  const s=computeStreak();
+  if(c>=90){
+    streak.textContent="🏁 خلّصت الـ90! مبروك — دلوقتي ثبّت وكرّر.";
+  } else if(c===0){
+    streak.textContent="";
+  } else if(s.current>0){
+    streak.textContent=`🔥 سلسلة ${s.current} ${s.current===1?'يوم':'أيام'}`
+      + (s.studiedToday ? " · النهارده ✓" : " · لسه النهارده");
+  } else {
+    streak.textContent="السلسلة اتقطعت — ابدأها من النهارده 🔥";
+  }
+  bestEl.textContent = s.best>1 ? `أطول سلسلة وصلتها: ${s.best} أيام` : "";
+  updateContinueBtn();
+}
+
+/* ------------- CONTINUE WHERE YOU STOPPED ------------- */
+function firstUndone(){
+  const d=DAYS.find(d=>!done[d.n]);
+  return d ? d.n : null;
+}
+function updateContinueBtn(){
+  const btn=document.getElementById('continueBtn');
+  if(!btn) return;
+  const n=firstUndone();
+  btn.disabled = n===null;
+  btn.textContent = n===null ? "✓ خلّصت كل الأيام" : `↩ كمّل من يوم ${n}`;
+}
+function goToDay(n){
+  if(n===null) return;
+  if(searchBox && searchBox.value){ searchBox.value=''; applyFilter(''); }
+  const el=app.querySelector(`.day[data-day="${n}"]`);
+  if(!el) return;
+  if(!el.classList.contains('open')) toggleOpen(n);
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
 
 document.getElementById('resetBtn').addEventListener('click',()=>{
   if(confirm("متأكد؟ ده هيصفّر كل المواضيع المشطوبة.")){ done={}; save(); render(); }
 });
+
+/* ------------- SEARCH ------------- */
+const searchBox=document.getElementById('searchBox');
+const searchWrap=document.getElementById('searchWrap');
+const searchCount=document.getElementById('searchCount');
+
+// Built once, lazily: day number + Arabic title + English title + every vocab word.
+let INDEX=null;
+function buildIndex(){
+  INDEX={};
+  DAYS.forEach(d=>{
+    const f=d.full||{};
+    const parts=[String(d.n),'day '+d.n,d.t,d.en];
+    (f.vocab||[]).forEach(v=>parts.push(v[0],v[2]));
+    (f.chunks||[]).forEach(c=>parts.push(c[0],c[1]));
+    INDEX[d.n]=parts.join(' ').toLowerCase();
+  });
+}
+function applyFilter(qRaw){
+  const q=(qRaw||'').trim().toLowerCase();
+  searchWrap.classList.toggle('has-value', !!q);
+  const rows=app.querySelectorAll('.day');
+  const noRes=document.getElementById('noResults');
+
+  if(!q){
+    rows.forEach(r=>r.classList.remove('is-hidden'));
+    app.querySelectorAll('.phase').forEach(p=>p.classList.remove('is-hidden'));
+    if(noRes) noRes.classList.add('is-hidden');
+    searchCount.textContent='';
+    return;
+  }
+  if(!INDEX) buildIndex();
+
+  let shown=0;
+  const livePhases=new Set();
+  rows.forEach(r=>{
+    const n=+r.dataset.day;
+    const hit=INDEX[n] && INDEX[n].includes(q);
+    r.classList.toggle('is-hidden', !hit);
+    if(hit){ shown++; livePhases.add(r.dataset.phase); }
+  });
+  app.querySelectorAll('.phase').forEach(p=>{
+    p.classList.toggle('is-hidden', !livePhases.has(p.dataset.phase));
+  });
+  if(noRes) noRes.classList.toggle('is-hidden', shown>0);
+  searchCount.textContent = shown ? `${shown} من 90 يوم مطابقين` : '';
+}
+let searchTimer=null;
+searchBox.addEventListener('input',()=>{
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>applyFilter(searchBox.value),120);
+});
+searchBox.addEventListener('keydown',e=>{ if(e.key==='Escape'){ searchBox.value=''; applyFilter(''); } });
+document.getElementById('clearSearch').addEventListener('click',()=>{
+  searchBox.value=''; applyFilter(''); searchBox.focus();
+});
+document.getElementById('continueBtn').addEventListener('click',()=>goToDay(firstUndone()));
+
+/* ------------- EXPORT / IMPORT ------------- */
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const payload={app:"eng90",version:2,exportedAt:new Date().toISOString(),done:done};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='eng90-progress-'+todayStr()+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+
+const importFile=document.getElementById('importFile');
+document.getElementById('importBtn').addEventListener('click',()=>importFile.click());
+importFile.addEventListener('change',()=>{
+  const file=importFile.files&&importFile.files[0];
+  if(!file) return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    let incoming=null;
+    try{
+      const data=JSON.parse(rd.result);
+      incoming = data && typeof data==='object'
+        ? (data.done && typeof data.done==='object' ? data.done : data)
+        : null;
+    }catch(e){ incoming=null; }
+    if(!incoming){ alert("الملف ده مش نسخة تقدّم صالحة."); importFile.value=''; return; }
+
+    const clean={};
+    Object.keys(incoming).forEach(k=>{
+      const n=parseInt(k,10);
+      if(!(n>=1&&n<=90)) return;
+      const v=incoming[k];
+      if(v===true) clean[n]=NO_DATE;
+      else if(typeof v==='string' && (v===NO_DATE || /^\d{4}-\d{2}-\d{2}$/.test(v))) clean[n]=v;
+    });
+    const keys=Object.keys(clean);
+    if(!keys.length){ alert("مفيش أيام مشطوبة في الملف ده."); importFile.value=''; return; }
+
+    const added=keys.filter(k=>!done[k]).length;
+    const msg = `الملف فيه ${keys.length} يوم مشطوب (${added} منهم جديد عندك).\n\n`
+      + `OK = دمج مع تقدّمك الحالي\nCancel = استبدال تقدّمك بالكامل بالملف`;
+    if(confirm(msg)) Object.assign(done, clean);
+    else done=clean;
+    save(); render();
+    alert("تم الاسترجاع ✓");
+    importFile.value='';
+  };
+  rd.readAsText(file);
+});
+
+/* ------------- SERVICE WORKER ------------- */
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      reg.addEventListener('updatefound',()=>{
+        const sw=reg.installing;
+        if(!sw) return;
+        sw.addEventListener('statechange',()=>{
+          if(sw.state==='installed' && navigator.serviceWorker.controller) showUpdateToast(sw);
+        });
+      });
+    }).catch(()=>{});
+  });
+}
+function showUpdateToast(sw){
+  if(document.querySelector('.toast')) return;
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML='<span>في نسخة جديدة من الصفحة.</span><button type="button">حدّث</button>';
+  t.querySelector('button').addEventListener('click',()=>{
+    sw.postMessage('skipWaiting'); location.reload();
+  });
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),15000);
+}
 
 /* ------------- THEME TOGGLE ------------- */
 const THEME_KEY="eng90_theme";
