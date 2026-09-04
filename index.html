@@ -270,11 +270,8 @@
     </div>
     <div class="pcard-btns">
       <button class="reset" id="themeBtn" title="تبديل الوضع الفاتح/الغامق" aria-label="تبديل الوضع"></button>
-      <button class="reset" id="exportBtn" title="نزّل نسخة من تقدّمك">⬇ حفظ نسخة</button>
-      <button class="reset" id="importBtn" title="ارفع نسخة محفوظة">⬆ استرجاع</button>
       <button class="reset" id="resetBtn">تصفير التقدّم</button>
     </div>
-    <input type="file" id="importFile" accept="application/json,.json" hidden>
   </div>
 </div>
 
@@ -716,56 +713,6 @@ document.getElementById('clearSearch').addEventListener('click',()=>{
   searchBox.value=''; applyFilter(''); searchBox.focus();
 });
 document.getElementById('continueBtn').addEventListener('click',()=>goToDay(firstUndone()));
-
-/* ------------- EXPORT / IMPORT ------------- */
-document.getElementById('exportBtn').addEventListener('click',()=>{
-  const payload={app:"eng90",version:2,exportedAt:new Date().toISOString(),done:done};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download='eng90-progress-'+todayStr()+'.json';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-
-const importFile=document.getElementById('importFile');
-document.getElementById('importBtn').addEventListener('click',()=>importFile.click());
-importFile.addEventListener('change',()=>{
-  const file=importFile.files&&importFile.files[0];
-  if(!file) return;
-  const rd=new FileReader();
-  rd.onload=()=>{
-    let incoming=null;
-    try{
-      const data=JSON.parse(rd.result);
-      incoming = data && typeof data==='object'
-        ? (data.done && typeof data.done==='object' ? data.done : data)
-        : null;
-    }catch(e){ incoming=null; }
-    if(!incoming){ alert("الملف ده مش نسخة تقدّم صالحة."); importFile.value=''; return; }
-
-    const clean={};
-    Object.keys(incoming).forEach(k=>{
-      const n=parseInt(k,10);
-      if(!(n>=1&&n<=90)) return;
-      const v=incoming[k];
-      if(v===true) clean[n]=NO_DATE;
-      else if(typeof v==='string' && (v===NO_DATE || /^\d{4}-\d{2}-\d{2}$/.test(v))) clean[n]=v;
-    });
-    const keys=Object.keys(clean);
-    if(!keys.length){ alert("مفيش أيام مشطوبة في الملف ده."); importFile.value=''; return; }
-
-    const added=keys.filter(k=>!done[k]).length;
-    const msg = `الملف فيه ${keys.length} يوم مشطوب (${added} منهم جديد عندك).\n\n`
-      + `OK = دمج مع تقدّمك الحالي\nCancel = استبدال تقدّمك بالكامل بالملف`;
-    if(confirm(msg)) Object.assign(done, clean);
-    else done=clean;
-    save(); render();
-    alert("تم الاسترجاع ✓");
-    importFile.value='';
-  };
-  rd.readAsText(file);
-});
 
 /* ------------- SERVICE WORKER ------------- */
 if('serviceWorker' in navigator && location.protocol!=='file:'){

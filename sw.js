@@ -1,6 +1,6 @@
 /* تحدي الـ 90 يوم — service worker
    Bump CACHE_VERSION whenever index.html changes so users pull the new build. */
-const CACHE_VERSION = 'eng90-v2';
+const CACHE_VERSION = 'eng90-v3';
 const CORE = [
   './',
   './index.html',
