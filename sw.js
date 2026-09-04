@@ -1,6 +1,6 @@
 /* تحدي الـ 90 يوم — service worker
    Bump CACHE_VERSION whenever index.html changes so users pull the new build. */
-const CACHE_VERSION = 'eng90-v1';
+const CACHE_VERSION = 'eng90-v2';
 const CORE = [
   './',
   './index.html',
@@ -13,7 +13,9 @@ const EXTRA = ['./icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_VERSION)
-      .then(c => c.addAll(CORE).then(() =>
+      // cache: 'reload' bypasses the HTTP cache, so a precache can never
+      // capture a stale copy that the browser is still holding.
+      .then(c => c.addAll(CORE.map(u => new Request(u, {cache: 'reload'}))).then(() =>
         // A missing optional icon must not abort the whole precache.
         Promise.allSettled(EXTRA.map(u => c.add(u)))
       ))
@@ -59,10 +61,11 @@ self.addEventListener('fetch', e => {
 
   if (url.origin !== self.location.origin) return;
 
-  // The page itself: network first, so a fresh deploy wins; cache is the offline fallback.
+  // The page itself: network first, so a fresh deploy wins; cache is the offline
+  // fallback. cache: 'reload' skips the browser's 10-minute HTTP cache on Pages.
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
     e.respondWith(
-      fetch(req)
+      fetch(new Request(req.url, {cache: 'reload', credentials: 'same-origin'}))
         .then(res => {
           const copy = res.clone();
           caches.open(CACHE_VERSION).then(c => c.put('./index.html', copy));
