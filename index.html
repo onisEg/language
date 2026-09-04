@@ -229,6 +229,66 @@
   .chunk .en{padding-inline-end:26px}
   .no-tts .spk{display:none}
 
+  /* ---- Plan tabs ---- */
+  .plan-tabs{display:flex;gap:8px;margin:0 0 14px;background:var(--paper);
+    border:1.5px solid var(--line);border-radius:12px;padding:5px}
+  .plan-tabs button{
+    flex:1;background:none;border:none;font-family:inherit;font-weight:700;
+    font-size:.9rem;color:var(--muted);padding:10px 8px;border-radius:8px;
+    cursor:pointer;transition:.18s;line-height:1.5;
+  }
+  .plan-tabs button .t-sub{display:block;font-weight:400;font-size:.74rem;opacity:.8}
+  .plan-tabs button[aria-selected="true"]{background:var(--moss);color:var(--paper)}
+  .plan-tabs button:not([aria-selected="true"]):hover{background:var(--moss-soft);color:var(--moss)}
+
+  /* ---- Plan B ---- */
+  .b-intro{font-size:.9rem;color:var(--muted);line-height:1.9;margin:0 0 14px}
+  .b-intro b{color:var(--ink)}
+  .bday{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+    margin-bottom:10px;overflow:hidden}
+  .bday.done{border-color:var(--moss)}
+  .bday-head{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;
+    user-select:none;background:none;border:none;width:100%;font-family:inherit;text-align:start}
+  .bday-num{font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap}
+  .bday-state{font-size:.8rem;color:var(--muted);margin-inline-start:auto;white-space:nowrap}
+  .bday.done .bday-state{color:var(--moss);font-weight:600}
+  .bday-body{padding:0 15px 15px;border-top:1px dashed var(--line);display:none}
+  .bday.open .bday-body{display:block}
+  .b-label{font-size:.82rem;color:var(--muted);margin:14px 0 6px;font-weight:600}
+  .b-clip{width:100%;font-family:inherit;font-size:.88rem;color:var(--ink);
+    background:var(--bg);border:1.5px solid var(--line);border-radius:9px;padding:9px 12px}
+  .b-clip:focus{outline:none;border-color:var(--moss)}
+  .b-words{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;align-items:center}
+  .b-words input{font-family:inherit;font-size:.88rem;color:var(--ink);
+    background:var(--bg);border:1.5px solid var(--line);border-radius:9px;padding:8px 11px;min-width:0}
+  .b-words input:focus{outline:none;border-color:var(--moss)}
+  .b-words input.en{direction:ltr;text-align:left}
+  .b-steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+  .b-step{display:flex;align-items:flex-start;gap:9px;font-size:.88rem;line-height:1.7;cursor:pointer}
+  .b-step input{margin-top:5px;accent-color:var(--moss);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+  .b-step .hint{display:block;font-size:.78rem;color:var(--muted)}
+  .b-light{margin-top:12px;padding:10px 12px;background:var(--moss-soft);border-radius:9px;
+    font-size:.82rem;color:var(--moss);line-height:1.8}
+  .b-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .b-mark{background:var(--moss);color:var(--paper);border:none;font-family:inherit;
+    font-weight:700;font-size:.86rem;padding:10px 18px;border-radius:9px;cursor:pointer}
+  .b-mark.undo{background:var(--bg);color:var(--muted);border:1.5px solid var(--line)}
+  .b-bank{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+    padding:15px;margin-bottom:14px}
+  .b-bank h3{margin:0 0 10px;font-size:.95rem}
+  .b-bank-list{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow-y:auto}
+  .b-chip{background:var(--bg);border:1px solid var(--line);border-radius:20px;
+    padding:4px 11px;font-size:.82rem;display:inline-flex;align-items:center;gap:6px}
+  .b-chip .en{direction:ltr}
+  .b-chip .ar{color:var(--muted);font-size:.76rem}
+  .b-empty{color:var(--muted);font-size:.87rem;font-style:italic}
+
+  @media(max-width:520px){
+    .b-words{grid-template-columns:1fr auto}
+    .b-words input.ar{grid-column:1/-1}
+    .plan-tabs button{font-size:.83rem}
+  }
+
   /* ---- Update toast ---- */
   .toast{
     position:fixed;inset-inline:14px;bottom:14px;margin:0 auto;max-width:420px;z-index:50;
@@ -260,11 +320,15 @@
 </header>
 
 <div class="wrap">
+  <div class="plan-tabs" role="tablist">
+    <button role="tab" id="tabA" aria-selected="true" data-plan="a">الخطة أ<span class="t-sub">٩٠ موضوع · مذاكرة</span></button>
+    <button role="tab" id="tabB" aria-selected="false" data-plan="b">الخطة ب<span class="t-sub">٩٠ يوم · تحدّي الضغط</span></button>
+  </div>
   <div class="progress-card">
     <div class="ring" id="ring"><b id="ringTxt">0%</b></div>
     <div class="p-meta">
-      <div class="big"><span id="doneCount">0</span> من 90 موضوع</div>
-      <div class="small">فضل <span id="leftCount">90</span> يوم على خط النهاية</div>
+      <div class="big"><span id="doneCount">0</span> <span id="doneUnit">من 90 موضوع</span></div>
+      <div class="small" id="leftLine">فضل <span id="leftCount">90</span> يوم على خط النهاية</div>
       <div class="streak" id="streakTxt"></div>
       <div class="streak-best" id="streakBest"></div>
     </div>
@@ -291,6 +355,22 @@
 </div>
 
 <div class="wrap" id="app"></div>
+
+<div class="wrap" id="appB" hidden>
+  <p class="b-intro">
+    كل يوم: <b>مقطع واحد</b> أصعب من مستواك شوية، تسمعه بعمق وتكرّر الأجزاء الصعبة.
+    تطلّع منه <b>٤ كلمات</b> مستعملة في الحياة اليومية وتتمرّن عليها في جمل حقيقية.
+    وبعدين <b>تتكلم قدام الكاميرا</b> وإنت مستخدم الأربع كلمات — ده الضغط اللي بيطوّر.
+  </p>
+  <div class="b-bank">
+    <h3>بنك الكلمات — <span id="bankCount">0</span> من 360</h3>
+    <div class="b-bank-list" id="bankList"><span class="b-empty">لسه مضفتش كلمات. ابدأ من اليوم الأول.</span></div>
+  </div>
+  <div class="controls">
+    <button class="continue-btn" id="bContinue">↩ كمّل من هنا</button>
+  </div>
+  <div id="bDays"></div>
+</div>
 
 <footer>
   <p>القاعدة الذهبية: اليوم اللي متقدرش تذاكر فيه، اعمل ٥ دقايق بس — <span class="en">just don't break the chain.</span> 🔥</p>
@@ -608,10 +688,13 @@ function toggleDone(n){
 }
 
 function updateProgress(){
+  if(typeof currentPlan!=='undefined' && currentPlan==='b'){ updateProgressB(); return; }
   const c=Object.keys(done).length;
   const pct=Math.round(c/90*100);
   document.getElementById('doneCount').textContent=c;
-  document.getElementById('leftCount').textContent=90-c;
+  document.getElementById('doneUnit').textContent="من 90 موضوع";
+  document.getElementById('leftLine').innerHTML=
+    `فضل <span id="leftCount">${90-c}</span> يوم على خط النهاية`;
   document.getElementById('ringTxt').textContent=pct+'%';
   document.getElementById('ring').style.setProperty('--p',pct);
   const streak=document.getElementById('streakTxt');
@@ -629,6 +712,24 @@ function updateProgress(){
   }
   bestEl.textContent = s.best>1 ? `أطول سلسلة وصلتها: ${s.best} أيام` : "";
   updateContinueBtn();
+}
+
+function updateProgressB(){
+  const c=bDoneCount(), pct=Math.round(c/B_DAYS*100);
+  document.getElementById('ringTxt').textContent=pct+"%";
+  document.getElementById('ring').style.setProperty('--p',pct);
+  document.getElementById('doneCount').textContent=c;
+  document.getElementById('doneUnit').textContent="من 90 يوم";
+  document.getElementById('leftLine').innerHTML=
+    `<span id="leftCount">${bAllWords().length}</span> كلمة مكتسبة من 360`;
+  const s=bStreak(), streak=document.getElementById('streakTxt');
+  if(c>=B_DAYS) streak.textContent="🏁 خلّصت الـ90 يوم! مبروك.";
+  else if(c===0) streak.textContent="";
+  else if(s.current>0)
+    streak.textContent=`🔥 سلسلة ${s.current} ${s.current===1?'يوم':'أيام'}`
+      + (s.studiedToday?" · النهارده ✓":" · لسه النهارده");
+  else streak.textContent="السلسلة اتقطعت — ابدأها من النهارده 🔥";
+  document.getElementById('streakBest').textContent = s.best>1 ? `أطول سلسلة وصلتها: ${s.best} أيام` : "";
 }
 
 /* ------------- CONTINUE WHERE YOU STOPPED ------------- */
@@ -654,6 +755,12 @@ function goToDay(n){
 }
 
 document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(typeof currentPlan!=='undefined' && currentPlan==='b'){
+    if(confirm("متأكد إنك عايز تصفّر تقدّم الخطة ب كله؟ الكلمات اللي كتبتها هتتمسح.")){
+      bData={}; bSave(); bRender();
+    }
+    return;
+  }
   if(confirm("متأكد؟ ده هيصفّر كل المواضيع المشطوبة.")){ done={}; save(); render(); }
 });
 
@@ -714,6 +821,233 @@ document.getElementById('clearSearch').addEventListener('click',()=>{
 });
 document.getElementById('continueBtn').addEventListener('click',()=>goToDay(firstUndone()));
 
+/* ============================================================
+   PLAN B — the pressure loop: deep listening, 4 words, camera.
+   Separate storage from Plan A; the two plans never share state.
+   Shape: { "3": {clip, words:[{en,ar}x4], listen, practice, record,
+                  redo, light, date} }
+   ============================================================ */
+const B_KEY="eng90b_v1";
+const B_DAYS=90, B_WORDS_PER_DAY=4;
+let bData={};
+try{ const s=localStorage.getItem(B_KEY); if(s) bData=JSON.parse(s)||{}; }catch(e){ bData={}; }
+function bSave(){ try{ localStorage.setItem(B_KEY, JSON.stringify(bData)); }catch(e){} }
+function bGet(n){
+  if(!bData[n]) bData[n]={clip:"",words:[],listen:false,practice:false,record:false,redo:false,light:false,date:null};
+  if(!Array.isArray(bData[n].words)) bData[n].words=[];
+  return bData[n];
+}
+// A day counts as done when the three core steps are ticked.
+// "light" swaps the camera step for a voice recording — same credit,
+// because a plan you abandon on day 12 teaches you nothing.
+function bIsDone(n){
+  const d=bData[n]; if(!d) return false;
+  return !!(d.listen && d.practice && d.record);
+}
+function bDoneCount(){ let c=0; for(let i=1;i<=B_DAYS;i++) if(bIsDone(i)) c++; return c; }
+function bAllWords(){
+  const out=[];
+  for(let i=1;i<=B_DAYS;i++){
+    const d=bData[i]; if(!d) continue;
+    (d.words||[]).forEach(w=>{ if(w && w.en && w.en.trim()) out.push(w); });
+  }
+  return out;
+}
+function bStudyDates(){
+  const s=new Set();
+  for(let i=1;i<=B_DAYS;i++) if(bIsDone(i) && bData[i].date) s.add(bData[i].date);
+  return [...s].sort();
+}
+function bStreak(){
+  const ds=bStudyDates();
+  if(!ds.length) return {current:0,best:0,studiedToday:false};
+  let best=1,run=1;
+  for(let i=1;i<ds.length;i++){ run = dayDiff(ds[i-1],ds[i])===1 ? run+1 : 1; if(run>best) best=run; }
+  const t=todayStr(), gap=dayDiff(ds[ds.length-1],t);
+  let current=0;
+  if(gap===0||gap===1){
+    current=1;
+    for(let i=ds.length-1;i>0;i--){ if(dayDiff(ds[i-1],ds[i])===1) current++; else break; }
+  }
+  return {current,best,studiedToday:gap===0};
+}
+
+const appB=document.getElementById('appB');
+const bDaysEl=document.getElementById('bDays');
+
+function bDayHTML(n){
+  const d=bGet(n), done=bIsDone(n);
+  const filled=(d.words||[]).filter(w=>w&&w.en&&w.en.trim()).length;
+  const state = done ? "خلص ✓" : (filled?`${filled}/4 كلمات`:"لسه");
+  let rows="";
+  for(let i=0;i<B_WORDS_PER_DAY;i++){
+    const w=(d.words&&d.words[i])||{en:"",ar:""};
+    rows+=`<div class="b-words">
+      <input class="en" type="text" dir="ltr" placeholder="word ${i+1}" data-bw="${n}:${i}:en" value="${escAttr(w.en||"")}">
+      <input class="ar" type="text" placeholder="معناها" data-bw="${n}:${i}:ar" value="${escAttr(w.ar||"")}">
+      ${TTS?`<button class="spk" data-say="${escAttr(w.en||"")}" aria-label="اسمع النطق" title="اسمع النطق">${SPK_SVG}</button>`:'<span></span>'}
+    </div>`;
+  }
+  const step=(key,label,hint)=>`<label class="b-step">
+      <input type="checkbox" data-bs="${n}:${key}"${d[key]?" checked":""}>
+      <span>${label}<span class="hint">${hint}</span></span>
+    </label>`;
+  return `<div class="bday${done?' done':''}${d._open?' open':''}" data-bday="${n}">
+    <button class="bday-head" data-btoggle="${n}">
+      <span class="bday-num">اليوم ${String(n).padStart(2,'0')}</span>
+      <span class="bday-state">${state}</span>
+    </button>
+    <div class="bday-body">
+      <div class="b-label">المقطع اللي اشتغلت عليه</div>
+      <input class="b-clip" type="text" placeholder="لينك أو اسم المقطع…" data-bclip="${n}" value="${escAttr(d.clip||"")}">
+      <div class="b-label">الأربع كلمات</div>
+      ${rows}
+      <div class="b-label">الخطوات</div>
+      <div class="b-steps">
+        ${step('listen','سماع عميق','اسمع المقطع كامل الأول، علّم على الأجزاء الصعبة، وكرّرها لحد ما تبقى مريحة لودنك.')}
+        ${step('practice','تمرين على الكلمات','خُد الأربع كلمات على ChatGPT وخلّيه يعملك منهم جمل ومواقف وأسئلة تجاوبها.')}
+        ${step('record', d.light?'تسجيل صوتي (يوم خفيف)':'تسجيل فيديو','اتكلم وإنت مستخدم الأربع كلمات أكتر من مرة. الفيديو بينك وبين نفسك.')}
+        ${step('redo','إعادة بعد التصحيح (اختياري)','ابعت التسجيل لـ Gemini أو ChatGPT يصحّحلك، وسجّل تاني بالتصحيح.')}
+      </div>
+      <div class="b-light">
+        مش قادر تصوّر النهارده؟ <b>سجّل صوتك بس</b> — نفس الشرط: استخدم الأربع كلمات.
+        <label class="b-step" style="margin-top:6px">
+          <input type="checkbox" data-blight="${n}"${d.light?" checked":""}>
+          <span>اعتبر النهارده يوم خفيف</span>
+        </label>
+      </div>
+      <div class="b-actions">
+        <button class="b-mark${done?' undo':''}" data-bmark="${n}">${done?'إلغاء التشطيب':'شطّب اليوم'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bRender(){
+  let html="";
+  for(let i=1;i<=B_DAYS;i++) html+=bDayHTML(i);
+  bDaysEl.innerHTML=html;
+  bUpdate();
+}
+function bUpdate(){
+  const words=bAllWords();
+  const bc=document.getElementById('bankCount');
+  if(bc) bc.textContent=words.length;
+  const list=document.getElementById('bankList');
+  if(list){
+    list.innerHTML = words.length
+      ? words.map(w=>`<span class="b-chip"><span class="en">${esc(w.en)}</span>${w.ar?`<span class="ar">${esc(w.ar)}</span>`:''}</span>`).join("")
+      : '<span class="b-empty">لسه مضفتش كلمات. ابدأ من اليوم الأول.</span>';
+  }
+  const btn=document.getElementById('bContinue');
+  if(btn){
+    let next=null;
+    for(let i=1;i<=B_DAYS;i++) if(!bIsDone(i)){ next=i; break; }
+    btn.disabled = next===null;
+    btn.textContent = next===null ? "✓ خلّصت الـ90 يوم" : `↩ كمّل من يوم ${next}`;
+    btn.dataset.next = next===null ? "" : next;
+  }
+  if(currentPlan==='b') updateProgress();
+}
+function bRefreshDay(n){
+  const el=bDaysEl.querySelector(`.bday[data-bday="${n}"]`);
+  if(!el) return;
+  const open=el.classList.contains('open');
+  bGet(n)._open=open;
+  el.outerHTML=bDayHTML(n);
+  bUpdate();
+}
+
+appB.addEventListener('click',e=>{
+  const say=e.target.closest('[data-say]');
+  if(say){ e.stopPropagation(); if(say.dataset.say) speak(say.dataset.say,say); return; }
+  const tog=e.target.closest('[data-btoggle]');
+  if(tog){
+    const card=tog.closest('.bday');
+    card.classList.toggle('open');
+    bGet(+tog.dataset.btoggle)._open=card.classList.contains('open');
+    return;
+  }
+  const mark=e.target.closest('[data-bmark]');
+  if(mark){
+    const n=+mark.dataset.bmark, d=bGet(n);
+    if(bIsDone(n)){ d.listen=d.practice=d.record=false; d.date=null; }
+    else { d.listen=d.practice=d.record=true; d.date=todayStr(); }
+    d._open=true; bSave(); bRefreshDay(n);
+    return;
+  }
+  const cont=e.target.closest('#bContinue');
+  if(cont && cont.dataset.next){
+    const n=+cont.dataset.next;
+    const el=bDaysEl.querySelector(`.bday[data-bday="${n}"]`);
+    if(el){
+      el.classList.add('open'); bGet(n)._open=true;
+      el.scrollIntoView({behavior:'smooth',block:'center'});
+      el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    }
+  }
+});
+
+appB.addEventListener('input',e=>{
+  const clip=e.target.closest('[data-bclip]');
+  if(clip){ bGet(+clip.dataset.bclip).clip=clip.value; bSave(); return; }
+  const bw=e.target.closest('[data-bw]');
+  if(bw){
+    const [n,i,f]=bw.dataset.bw.split(':');
+    const d=bGet(+n);
+    while(d.words.length<B_WORDS_PER_DAY) d.words.push({en:"",ar:""});
+    d.words[+i][f]=bw.value;
+    bSave(); bUpdate();
+    // keep the day's summary line honest without stealing focus
+    const head=bDaysEl.querySelector(`.bday[data-bday="${n}"] .bday-state`);
+    if(head && !bIsDone(+n)){
+      const filled=d.words.filter(w=>w&&w.en&&w.en.trim()).length;
+      head.textContent = filled?`${filled}/4 كلمات`:"لسه";
+    }
+    const spk=bw.closest('.b-words') && bw.closest('.b-words').querySelector('.spk');
+    if(spk && bw.classList.contains('en')) spk.dataset.say=bw.value;
+  }
+});
+
+appB.addEventListener('change',e=>{
+  const bs=e.target.closest('[data-bs]');
+  if(bs){
+    const [n,key]=bs.dataset.bs.split(':');
+    const d=bGet(+n); d[key]=bs.checked;
+    if(bIsDone(+n) && !d.date) d.date=todayStr();
+    if(!bIsDone(+n)) d.date=null;
+    d._open=true; bSave(); bRefreshDay(+n);
+    return;
+  }
+  const bl=e.target.closest('[data-blight]');
+  if(bl){
+    const n=+bl.dataset.blight, d=bGet(n);
+    d.light=bl.checked; d._open=true; bSave(); bRefreshDay(n);
+  }
+});
+
+/* ------------- PLAN SWITCH ------------- */
+let currentPlan='a';
+const PLAN_KEY='eng90_plan';
+try{ const p=localStorage.getItem(PLAN_KEY); if(p==='b') currentPlan='b'; }catch(e){}
+
+function setPlan(p){
+  currentPlan = p==='b' ? 'b' : 'a';
+  try{ localStorage.setItem(PLAN_KEY,currentPlan); }catch(e){}
+  document.getElementById('tabA').setAttribute('aria-selected', currentPlan==='a');
+  document.getElementById('tabB').setAttribute('aria-selected', currentPlan==='b');
+  const isA = currentPlan==='a';
+  app.hidden = !isA;
+  document.querySelector('.controls').closest('.wrap').hidden = !isA;
+  appB.hidden = isA;
+  if(!isA && !bDaysEl.innerHTML) bRender();
+  updateProgress();
+}
+document.querySelector('.plan-tabs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-plan]');
+  if(b) setPlan(b.dataset.plan);
+});
+
 /* ------------- SERVICE WORKER ------------- */
 if('serviceWorker' in navigator && location.protocol!=='file:'){
   window.addEventListener('load',()=>{
@@ -763,6 +1097,7 @@ document.getElementById('themeBtn').addEventListener('click',()=>{
 updateThemeBtn();
 
 render();
+setPlan(currentPlan);
 </script>
 </body>
 </html>
