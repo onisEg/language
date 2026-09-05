@@ -260,6 +260,37 @@
   .day.light .day-head .chk{border-color:var(--gold)}
   .light-tag{font-size:.72rem;color:var(--gold);font-weight:600;margin-inline-start:6px}
 
+  /* ---- Immersion log ---- */
+  .imm{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+  .imm-track{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+    padding:12px;margin-bottom:10px}
+  .imm-track > .t-head{display:flex;align-items:baseline;gap:8px;margin-bottom:9px;flex-wrap:wrap}
+  .imm-track .t-name{font-weight:700;font-size:.9rem}
+  .imm-track .t-goal{font-size:.75rem;color:var(--muted)}
+  .imm-row{display:grid;grid-template-columns:1fr 78px;gap:7px;margin-bottom:7px}
+  .imm-row.one{grid-template-columns:1fr}
+  .imm input{font-family:inherit;font-size:.85rem;color:var(--ink);background:var(--paper);
+    border:1.5px solid var(--line);border-radius:8px;padding:8px 11px;width:100%;min-width:0}
+  .imm input:focus{outline:none;border-color:var(--moss)}
+  .imm input.lnk{direction:ltr;text-align:left;font-size:.8rem}
+  .imm input.mins{text-align:center}
+  .imm-cards{display:flex;align-items:center;gap:9px;font-size:.86rem;
+    background:var(--moss-soft);border-radius:9px;padding:10px 12px;margin-bottom:10px}
+  .imm-cards input{width:70px;text-align:center;background:var(--paper)}
+  .imm-cards .lbl{font-weight:600;color:var(--moss)}
+  .imm-total{font-size:.8rem;color:var(--muted);margin-top:4px}
+
+  /* ---- Main channels (pick and stick) ---- */
+  .chan-card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
+    padding:15px;margin-bottom:14px}
+  .chan-card h3{margin:0 0 4px;font-size:.95rem}
+  .chan-sub{font-size:.8rem;color:var(--muted);margin:0 0 12px;line-height:1.8}
+  .chan-row{display:flex;align-items:center;gap:9px;margin-bottom:8px;flex-wrap:wrap}
+  .chan-row label{font-size:.85rem;font-weight:600;min-width:118px}
+  .chan-row input{flex:1;min-width:170px;font-family:inherit;font-size:.85rem;color:var(--ink);
+    background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 11px}
+  .chan-row input:focus{outline:none;border-color:var(--moss)}
+
   /* ---- Sources ---- */
   .src-card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;
     padding:15px;margin-bottom:14px}
@@ -399,6 +430,8 @@
   <div class="search-count" id="searchCount" aria-live="polite"></div>
 </div>
 
+<div class="wrap" id="chanWrap"></div>
+
 <div class="wrap" id="revWrap"></div>
 
 <div class="wrap" id="app"></div>
@@ -433,6 +466,7 @@
       <a href="https://www.youtube.com/results?search_query=easy+english+street+interviews" target="_blank" rel="noopener">Easy English · مقابلات الشارع</a>
     </div>
     <p class="src-note">
+      <b>اختار واحدة وثبّت عليها.</b> التنقّل بين القنوات كل يوم بياكل وقتك.<br>
       القاعدة: المقطع يكون <b>أصعب من مستواك شوية بس</b> — تفهم حوالي ٩٠٪ منه.
       لو محتاج توقف كل تانية، ده أصعب من اللازم. ولو فاهم كله من غير مجهود، ده أسهل من اللازم.
       وخلّيه <b>قصير</b> — دقيقة أو اتنين كفاية، لأنك هتسمعه كذا مرة.
@@ -693,6 +727,7 @@ function detailHTML(d){
     <h4>البلوكات <span class="em">— Chunks</span></h4><div class="chunks">${f.chunks.map(c=>`<div class="chunk">${spkBtn(c[0])}<span class="en">${esc(c[0])}</span><span class="ar">${esc(c[1])}</span></div>`).join("")}</div>
     <h4>أسئلة التحقق <span class="em">— جاوب من غير ما تبصّ</span></h4><ol class="qs">${f.qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>
     <details class="ans"><summary>الإجابات</summary><div class="ans-body">${esc(f.ans)}</div></details>
+    ${immersionHTML(d.n)}
     ${markBtn(d)}
   </div>`;
 }
@@ -746,6 +781,15 @@ app.addEventListener('click',e=>{
   if(mark){ e.stopPropagation(); toggleDone(+mark.dataset.mark); return; }
   const tog=e.target.closest('[data-toggle]');
   if(tog){ toggleOpen(+tog.dataset.toggle); }
+});
+app.addEventListener('input',e=>{
+  const f=e.target.closest('[data-imm]');
+  if(!f) return;
+  const [n,key,field]=f.dataset.imm.split(':');
+  const d=immGet(+n);
+  if(key==='cards') d.cards=f.value; else d[key][field]=f.value;
+  immSave();
+  if(field==='mins' || key==='cards') updateProgress();
 });
 app.addEventListener('keydown',e=>{
   if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
@@ -807,7 +851,13 @@ function updateProgress(){
     streak.textContent="السلسلة اتقطعت — ابدأها من النهارده 🔥";
   }
   bestEl.textContent = s.best>1 ? `أطول سلسلة وصلتها: ${s.best} أيام` : "";
+  const mins=(typeof immTotalMins==='function')?immTotalMins():0;
+  if(mins>0){
+    bestEl.textContent = (bestEl.textContent?bestEl.textContent+" · ":"")
+      + `${fmtHours(mins)} انغماس · ${immTotalCards()} كارت`;
+  }
   updateContinueBtn();
+  if(typeof renderChannels==='function') renderChannels();
   if(typeof renderReviews==='function') renderReviews();
 }
 
@@ -917,6 +967,96 @@ document.getElementById('clearSearch').addEventListener('click',()=>{
   searchBox.value=''; applyFilter(''); searchBox.focus();
 });
 document.getElementById('continueBtn').addEventListener('click',()=>goToDay(firstUndone()));
+
+/* ============================================================
+   IMMERSION LOG (Plan A)
+   The written plan splits every day into two tracks: active
+   immersion you study (80–95% comprehensible) and passive
+   immersion you enjoy (95%+). Plus 20 Anki cards a day.
+   Minutes are logged because CEFR levels are measured in hours,
+   not days — roughly 100–200 hours per level.
+   ============================================================ */
+const IMM_KEY="eng90_immersion_v1";
+const CARDS_GOAL=20;
+let imm={};
+try{ const s=localStorage.getItem(IMM_KEY); if(s) imm=JSON.parse(s)||{}; }catch(e){ imm={}; }
+function immSave(){ try{ localStorage.setItem(IMM_KEY, JSON.stringify(imm)); }catch(e){} }
+function immGet(n){
+  if(!imm[n]) imm[n]={active:{title:"",mins:"",link:""},passive:{title:"",mins:"",link:""},cards:""};
+  if(!imm[n].active) imm[n].active={title:"",mins:"",link:""};
+  if(!imm[n].passive) imm[n].passive={title:"",mins:"",link:""};
+  return imm[n];
+}
+function immTotalMins(){
+  let t=0;
+  for(const k in imm){
+    const d=imm[k]; if(!d) continue;
+    t += (parseInt(d.active&&d.active.mins,10)||0) + (parseInt(d.passive&&d.passive.mins,10)||0);
+  }
+  return t;
+}
+function immTotalCards(){
+  let t=0;
+  for(const k in imm) t += parseInt(imm[k]&&imm[k].cards,10)||0;
+  return t;
+}
+function fmtHours(mins){
+  const h=Math.floor(mins/60), m=mins%60;
+  return h ? (m ? `${h} س ${m} د` : `${h} ساعة`) : `${m} دقيقة`;
+}
+
+function trackHTML(n,key,name,goal){
+  const t=immGet(n)[key];
+  return `<div class="imm-track">
+    <div class="t-head"><span class="t-name">${name}</span><span class="t-goal">${goal}</span></div>
+    <div class="imm-row">
+      <input type="text" placeholder="اسم الفيديو أو المصدر" data-imm="${n}:${key}:title" value="${escAttr(t.title||"")}">
+      <input type="number" min="0" max="600" class="mins" placeholder="دقيقة" data-imm="${n}:${key}:mins" value="${escAttr(t.mins||"")}">
+    </div>
+    <div class="imm-row one">
+      <input type="text" class="lnk" placeholder="اللينك" data-imm="${n}:${key}:link" value="${escAttr(t.link||"")}">
+    </div>
+  </div>`;
+}
+function immersionHTML(n){
+  const d=immGet(n);
+  return `<div class="imm">
+    <h4>سجل اليوم <span class="em">— انغماس نشط + خفيف</span></h4>
+    <div class="imm-cards">
+      <span class="lbl">كروت Anki النهارده</span>
+      <input type="number" min="0" max="200" data-imm="${n}:cards:cards" value="${escAttr(d.cards||"")}">
+      <span class="t-goal">الهدف ${CARDS_GOAL} كارت (~30 دقيقة)</span>
+    </div>
+    ${trackHTML(n,'active','انغماس نشط — مذاكرة','تفهم 80–95% · ~30 د')}
+    ${trackHTML(n,'passive','انغماس خفيف — متعة','تفهم 95%+ · 30–60 د · وقت المواصلات والجيم والطبخ')}
+  </div>`;
+}
+
+/* ------------- MAIN CHANNELS (pick and stick) ------------- */
+const CHAN_KEY="eng90_channels_v1";
+let channels={active:"",passive:""};
+try{ const s=localStorage.getItem(CHAN_KEY); if(s) channels=Object.assign(channels,JSON.parse(s)||{}); }catch(e){}
+function chanSave(){ try{ localStorage.setItem(CHAN_KEY, JSON.stringify(channels)); }catch(e){} }
+const chanWrap=document.getElementById('chanWrap');
+function renderChannels(){
+  if(currentPlan!=='a'){ chanWrap.innerHTML=""; return; }
+  chanWrap.innerHTML=`<div class="chan-card">
+    <h3>قناتي الأساسية</h3>
+    <p class="chan-sub">اختار قناة واحدة لكل مسار وثبّت عليها. التنقّل بين عشر قنوات كل يوم بياكل وقتك ويوقّفك عن البدء أصلاً — لو زهقت منها، غيّرها، بس بعد ما تكون لقيت البديل.</p>
+    <div class="chan-row">
+      <label for="chanA">للانغماس النشط</label>
+      <input id="chanA" type="text" placeholder="مثلاً: Dreaming English" data-chan="active" value="${escAttr(channels.active||"")}">
+    </div>
+    <div class="chan-row">
+      <label for="chanP">للانغماس الخفيف</label>
+      <input id="chanP" type="text" placeholder="مثلاً: Easy Stories in English" data-chan="passive" value="${escAttr(channels.passive||"")}">
+    </div>
+  </div>`;
+}
+chanWrap.addEventListener('input',e=>{
+  const c=e.target.closest('[data-chan]');
+  if(c){ channels[c.dataset.chan]=c.value; chanSave(); }
+});
 
 /* ============================================================
    SPACED REPETITION (Plan A)
@@ -1207,8 +1347,13 @@ function setPlan(p){
   app.hidden = !isA;
   document.querySelector('.controls').closest('.wrap').hidden = !isA;
   appB.hidden = isA;
-  if(isA){ if(typeof renderReviews==='function') renderReviews(); }
-  else { revWrap.innerHTML=""; if(!bDaysEl.innerHTML) bRender(); }
+  if(isA){
+    if(typeof renderChannels==='function') renderChannels();
+    if(typeof renderReviews==='function') renderReviews();
+  } else {
+    revWrap.innerHTML=""; chanWrap.innerHTML="";
+    if(!bDaysEl.innerHTML) bRender();
+  }
   updateProgress();
 }
 document.querySelector('.plan-tabs').addEventListener('click',e=>{
